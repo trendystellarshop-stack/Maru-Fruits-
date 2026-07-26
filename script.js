@@ -54,18 +54,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.getElementById("orderForm");
     const note = document.getElementById("formNote");
+    const alertBox = document.getElementById("formAlert");
     if (form) {
+        const fields = form.querySelectorAll("input, select, textarea");
+
+        fields.forEach((field) => {
+            field.addEventListener("input", () => {
+                field.classList.toggle("is-invalid", !field.checkValidity());
+                if (alertBox) {
+                    alertBox.classList.add("d-none");
+                }
+            });
+        });
+
         form.addEventListener("submit", (event) => {
             event.preventDefault();
             event.stopPropagation();
             form.classList.add("was-validated");
 
-            if (form.checkValidity()) {
-                note.textContent = "Thanks! Your request is ready. We will confirm the order shortly.";
-                note.classList.add("text-success", "fw-semibold");
-                form.reset();
-                form.classList.remove("was-validated");
+            const invalidFields = Array.from(form.querySelectorAll("input[required], select[required], textarea[required]"))
+                .filter((field) => !field.checkValidity());
+
+            invalidFields.forEach((field) => field.classList.add("is-invalid"));
+
+            if (invalidFields.length > 0) {
+                if (alertBox) {
+                    const labels = invalidFields.map((field) => field.labels?.[0]?.textContent || field.id);
+                    alertBox.textContent = `Please complete the required field${invalidFields.length > 1 ? "s" : ""}: ${labels.join(", ")}.`;
+                    alertBox.classList.remove("d-none");
+                }
+                note.textContent = "Please fill in the highlighted fields.";
+                note.classList.remove("text-success", "fw-semibold");
+                note.classList.add("text-danger");
+                invalidFields[0].focus();
+                return;
             }
+
+            if (alertBox) {
+                alertBox.classList.add("d-none");
+                alertBox.textContent = "";
+            }
+            note.textContent = "Thanks! Your request is ready. We will confirm the order shortly.";
+            note.classList.add("text-success", "fw-semibold");
+            note.classList.remove("text-danger");
+            form.reset();
+            form.classList.remove("was-validated");
+            fields.forEach((field) => field.classList.remove("is-invalid"));
         });
     }
 });

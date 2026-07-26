@@ -290,6 +290,10 @@ body {
     color: var(--muted);
 }
 
+.order-form .alert {
+    margin-bottom: 1rem;
+}
+
 .site-footer {
     background: #12281b;
     color: rgba(255, 255, 255, 0.82);
