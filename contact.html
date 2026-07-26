@@ -58,29 +58,25 @@
                                     <div class="invalid-feedback">Please enter your name.</div>
                                 </div>
                                 <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                                </div>
+                                <div class="col-md-6">
                                     <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" required>
-                                    <div class="invalid-feedback">Please enter your phone number.</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="fruitType" class="form-label">Fruit Box</label>
-                                    <select id="fruitType" class="form-select" required>
-                                        <option value="">Choose one</option>
-                                        <option>Mixed Fruit Box</option>
-                                        <option>Mango Box</option>
-                                        <option>Seasonal Fruit Box</option>
-                                        <option>Office Fruit Box</option>
-                                    </select>
-                                    <div class="invalid-feedback">Please choose a fruit box.</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="area" class="form-label">Delivery Area</label>
-                                    <input type="text" class="form-control" id="area" placeholder="DHA, Gulshan, North Nazimabad" required>
-                                    <div class="invalid-feedback">Please enter your delivery area.</div>
+                                    <input type="tel" class="form-control" id="phone" placeholder="+92-XXX-XXXXXXX" required>
+                                    <div class="invalid-feedback">Please enter a valid phone number (10-15 digits).</div>
                                 </div>
                                 <div class="col-12">
-                                    <label for="message" class="form-label">Order Details</label>
-                                    <textarea id="message" class="form-control" rows="5" placeholder="Tell us quantity, preferred fruits, and delivery time."></textarea>
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <input type="text" class="form-control" id="subject" maxlength="100" required>
+                                    <div class="invalid-feedback">Please enter a subject (max 100 characters).</div>
+                                </div>
+                                <div class="col-12">
+                                    <label for="message" class="form-label">Message</label>
+                                    <textarea id="message" class="form-control" rows="5" placeholder="Enter your message here..." maxlength="1000" required></textarea>
+                                    <div class="invalid-feedback">Please enter a message (max 1000 characters).</div>
+                                    <small class="form-text text-muted d-block mt-1"><span id="charCount">0</span>/1000 characters</small>
                                 </div>
                                 <div class="col-12 d-flex flex-wrap gap-3 align-items-center">
                                     <button class="btn btn-success btn-lg" type="submit"><i class="fa-solid fa-paper-plane me-2"></i>Send Request</button>

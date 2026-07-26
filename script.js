@@ -55,17 +55,52 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("orderForm");
     const note = document.getElementById("formNote");
     const alertBox = document.getElementById("formAlert");
+    const messageField = document.getElementById("message");
+    const charCount = document.getElementById("charCount");
+
     if (form) {
         const fields = form.querySelectorAll("input, select, textarea");
 
+        const validateField = (field) => {
+            let isValid = field.checkValidity();
+
+            if (field.id === "email" && field.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                isValid = emailRegex.test(field.value);
+            }
+
+            if (field.id === "phone" && field.value) {
+                const phoneRegex = /^[\d\s\+\-\(\)]{10,15}$/;
+                isValid = phoneRegex.test(field.value);
+            }
+
+            if (field.id === "subject" && field.value.length > 100) {
+                isValid = false;
+            }
+
+            if (field.id === "message" && field.value.length > 1000) {
+                isValid = false;
+            }
+
+            field.classList.toggle("is-invalid", !isValid);
+            return isValid;
+        };
+
         fields.forEach((field) => {
             field.addEventListener("input", () => {
-                field.classList.toggle("is-invalid", !field.checkValidity());
+                validateField(field);
                 if (alertBox) {
                     alertBox.classList.add("d-none");
                 }
+                if (messageField && charCount && field.id === "message") {
+                    charCount.textContent = field.value.length;
+                }
             });
         });
+
+        if (messageField && charCount) {
+            charCount.textContent = messageField.value.length;
+        }
 
         form.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -73,17 +108,22 @@ document.addEventListener("DOMContentLoaded", () => {
             form.classList.add("was-validated");
 
             const invalidFields = Array.from(form.querySelectorAll("input[required], select[required], textarea[required]"))
-                .filter((field) => !field.checkValidity());
-
-            invalidFields.forEach((field) => field.classList.add("is-invalid"));
+                .filter((field) => !validateField(field));
 
             if (invalidFields.length > 0) {
                 if (alertBox) {
-                    const labels = invalidFields.map((field) => field.labels?.[0]?.textContent || field.id);
-                    alertBox.textContent = `Please complete the required field${invalidFields.length > 1 ? "s" : ""}: ${labels.join(", ")}.`;
+                    const errorMessages = invalidFields.map((field) => {
+                        let error = field.labels?.[0]?.textContent || field.id;
+                        if (field.id === "email") error += " - invalid format";
+                        if (field.id === "phone") error += " - must be 10-15 digits";
+                        if (field.id === "subject") error += " - max 100 characters";
+                        if (field.id === "message") error += " - max 1000 characters";
+                        return error;
+                    });
+                    alertBox.textContent = `${errorMessages.length > 1 ? "Errors" : "Error"}: ${errorMessages.join("; ")}.`;
                     alertBox.classList.remove("d-none");
                 }
-                note.textContent = "Please fill in the highlighted fields.";
+                note.textContent = "Please fix the highlighted errors and try again.";
                 note.classList.remove("text-success", "fw-semibold");
                 note.classList.add("text-danger");
                 invalidFields[0].focus();
@@ -94,11 +134,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 alertBox.classList.add("d-none");
                 alertBox.textContent = "";
             }
-            note.textContent = "Thanks! Your request is ready. We will confirm the order shortly.";
+            note.textContent = "Thank you! Your message has been sent successfully. We will get back to you soon.";
             note.classList.add("text-success", "fw-semibold");
             note.classList.remove("text-danger");
             form.reset();
             form.classList.remove("was-validated");
+            if (charCount) charCount.textContent = "0";
             fields.forEach((field) => field.classList.remove("is-invalid"));
         });
     }
